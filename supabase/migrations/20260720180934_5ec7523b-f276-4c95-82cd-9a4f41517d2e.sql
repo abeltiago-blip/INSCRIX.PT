@@ -1,0 +1,11 @@
+ALTER TABLE public.teams ALTER COLUMN captain_id DROP NOT NULL;
+ALTER TABLE public.team_members ALTER COLUMN member_name DROP NOT NULL;
+ALTER TABLE public.team_members ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE public.age_groups ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT now();
+DROP TRIGGER IF EXISTS update_age_groups_updated_at ON public.age_groups;
+CREATE TRIGGER update_age_groups_updated_at BEFORE UPDATE ON public.age_groups FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+ALTER TABLE public.event_qr_codes ADD COLUMN IF NOT EXISTS qr_code_url TEXT;
+ALTER TABLE public.email_templates ALTER COLUMN name DROP NOT NULL;
+ALTER TABLE public.email_templates ALTER COLUMN subject DROP NOT NULL;
+ALTER TABLE public.email_templates ALTER COLUMN html_content DROP NOT NULL;
+ALTER TABLE public.email_templates DROP CONSTRAINT IF EXISTS email_templates_name_key;

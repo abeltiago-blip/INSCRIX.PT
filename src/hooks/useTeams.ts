@@ -128,10 +128,11 @@ export const useTeams = () => {
       const user = await supabase.auth.getUser();
       if (!user.data.user) throw new Error('Utilizador não autenticado');
 
+      const { member_count: _mc, members: _members, ...teamInsert } = teamData as any;
       const { data, error } = await supabase
         .from('teams')
         .insert({
-          ...teamData,
+          ...teamInsert,
           captain_user_id: user.data.user.id
         })
         .select()
