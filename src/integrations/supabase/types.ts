@@ -29,6 +29,7 @@ export type Database = {
           name: string
           sort_order: number | null
           subcategory: string | null
+          updated_at: string
         }
         Insert: {
           category?: string | null
@@ -44,6 +45,7 @@ export type Database = {
           name: string
           sort_order?: number | null
           subcategory?: string | null
+          updated_at?: string
         }
         Update: {
           category?: string | null
@@ -59,6 +61,7 @@ export type Database = {
           name?: string
           sort_order?: number | null
           subcategory?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -162,12 +165,12 @@ export type Database = {
           category: string
           created_at: string
           description: string | null
-          html_content: string
+          html_content: string | null
           html_template: string | null
           id: string
           is_active: boolean
-          name: string
-          subject: string
+          name: string | null
+          subject: string | null
           subject_template: string | null
           template_key: string | null
           text_content: string | null
@@ -178,12 +181,12 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
-          html_content: string
+          html_content?: string | null
           html_template?: string | null
           id?: string
           is_active?: boolean
-          name: string
-          subject: string
+          name?: string | null
+          subject?: string | null
           subject_template?: string | null
           template_key?: string | null
           text_content?: string | null
@@ -194,12 +197,12 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
-          html_content?: string
+          html_content?: string | null
           html_template?: string | null
           id?: string
           is_active?: boolean
-          name?: string
-          subject?: string
+          name?: string | null
+          subject?: string | null
           subject_template?: string | null
           template_key?: string | null
           text_content?: string | null
@@ -321,6 +324,7 @@ export type Database = {
           is_used: boolean
           metadata: Json | null
           qr_code_data: string | null
+          qr_code_url: string | null
           qr_type: string
           registration_id: string | null
           used_at: string | null
@@ -333,6 +337,7 @@ export type Database = {
           is_used?: boolean
           metadata?: Json | null
           qr_code_data?: string | null
+          qr_code_url?: string | null
           qr_type?: string
           registration_id?: string | null
           used_at?: string | null
@@ -345,6 +350,7 @@ export type Database = {
           is_used?: boolean
           metadata?: Json | null
           qr_code_data?: string | null
+          qr_code_url?: string | null
           qr_type?: string
           registration_id?: string | null
           used_at?: string | null
@@ -1278,9 +1284,10 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_active: boolean
           joined_at: string
           member_email: string | null
-          member_name: string
+          member_name: string | null
           participant_cc: string | null
           participant_email: string | null
           participant_name: string | null
@@ -1292,9 +1299,10 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          is_active?: boolean
           joined_at?: string
           member_email?: string | null
-          member_name: string
+          member_name?: string | null
           participant_cc?: string | null
           participant_email?: string | null
           participant_name?: string | null
@@ -1306,9 +1314,10 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          is_active?: boolean
           joined_at?: string
           member_email?: string | null
-          member_name?: string
+          member_name?: string | null
           participant_cc?: string | null
           participant_email?: string | null
           participant_name?: string | null
@@ -1329,7 +1338,7 @@ export type Database = {
       }
       teams: {
         Row: {
-          captain_id: string
+          captain_id: string | null
           captain_user_id: string | null
           created_at: string
           description: string | null
@@ -1344,7 +1353,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          captain_id: string
+          captain_id?: string | null
           captain_user_id?: string | null
           created_at?: string
           description?: string | null
@@ -1359,7 +1368,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          captain_id?: string
+          captain_id?: string | null
           captain_user_id?: string | null
           created_at?: string
           description?: string | null
