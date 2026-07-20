@@ -222,8 +222,10 @@ export type Database = {
           id: string
           notes: string | null
           participant_email: string
+          participant_id: string | null
           participant_name: string
           registration_id: string
+          scanner_user_id: string | null
         }
         Insert: {
           bib_number?: string | null
@@ -235,8 +237,10 @@ export type Database = {
           id?: string
           notes?: string | null
           participant_email: string
+          participant_id?: string | null
           participant_name: string
           registration_id: string
+          scanner_user_id?: string | null
         }
         Update: {
           bib_number?: string | null
@@ -248,8 +252,10 @@ export type Database = {
           id?: string
           notes?: string | null
           participant_email?: string
+          participant_id?: string | null
           participant_name?: string
           registration_id?: string
+          scanner_user_id?: string | null
         }
         Relationships: [
           {
@@ -280,7 +286,7 @@ export type Database = {
           id: string
           is_active: boolean
           notes: string | null
-          organizer_id: string
+          organizer_id: string | null
           updated_at: string
         }
         Insert: {
@@ -294,7 +300,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           notes?: string | null
-          organizer_id: string
+          organizer_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -308,7 +314,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           notes?: string | null
-          organizer_id?: string
+          organizer_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -323,7 +329,7 @@ export type Database = {
       }
       event_qr_codes: {
         Row: {
-          code: string
+          code: string | null
           created_at: string
           created_by: string | null
           event_id: string
@@ -338,7 +344,7 @@ export type Database = {
           used_at: string | null
         }
         Insert: {
-          code: string
+          code?: string | null
           created_at?: string
           created_by?: string | null
           event_id: string
@@ -353,7 +359,7 @@ export type Database = {
           used_at?: string | null
         }
         Update: {
-          code?: string
+          code?: string | null
           created_at?: string
           created_by?: string | null
           event_id?: string
