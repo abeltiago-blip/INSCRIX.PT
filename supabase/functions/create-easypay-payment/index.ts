@@ -9,10 +9,9 @@ const corsHeaders = {
 interface EasyPayPaymentRequest {
   orderId: string;
   method: 'multibanco' | 'mbway' | 'cc' | 'dd';
-  amount: number;
   phone?: string; // For MB WAY
-  currency?: string;
 }
+
 
 interface EasyPayApiResponse {
   id: string;
@@ -38,26 +37,58 @@ serve(async (req) => {
   try {
     console.log("Creating EasyPay payment...");
 
-    // Initialize Supabase client
+    // Require authentication
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
+    }
+
+    // Initialize Supabase admin (for DB writes) and a client bound to the caller token (for auth)
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
+      { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    const { orderId, method, amount, phone, currency = 'EUR' }: EasyPayPaymentRequest = await req.json();
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token);
+    if (userErr || !userData?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
+    }
+    const authUserId = userData.user.id;
 
-    if (!orderId || !method || !amount) {
+    const { orderId, method, phone }: EasyPayPaymentRequest = await req.json();
+
+    if (!orderId || !method) {
       return new Response(
-        JSON.stringify({ error: "Missing required fields: orderId, method, amount" }),
+        JSON.stringify({ error: "Missing required fields: orderId, method" }),
         { status: 400, headers: corsHeaders }
       );
     }
+
+    // Fetch order server-side. Trust ONLY the DB amount/currency, never the client.
+    const { data: orderRow, error: orderErr } = await supabaseAdmin
+      .from("orders")
+      .select("id, user_id, total_amount, currency, status")
+      .eq("id", orderId)
+      .single();
+
+    if (orderErr || !orderRow) {
+      return new Response(JSON.stringify({ error: "Order not found" }), { status: 404, headers: corsHeaders });
+    }
+    if (orderRow.user_id && orderRow.user_id !== authUserId) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: corsHeaders });
+    }
+    if (orderRow.status === 'confirmed' || orderRow.status === 'cancelled') {
+      return new Response(JSON.stringify({ error: `Order already ${orderRow.status}` }), { status: 409, headers: corsHeaders });
+    }
+
+    const amount = Number(orderRow.total_amount);
+    const currency = orderRow.currency || 'EUR';
+    if (!(amount > 0)) {
+      return new Response(JSON.stringify({ error: "Invalid order amount" }), { status: 400, headers: corsHeaders });
+    }
+
 
     // Get EasyPay configuration
     const { data: paymentMethods, error: paymentMethodError } = await supabaseAdmin
