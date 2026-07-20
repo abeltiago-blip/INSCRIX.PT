@@ -270,6 +270,7 @@ export type Database = {
       }
       event_commissions: {
         Row: {
+          applies_to_ticket_types: string[] | null
           commission_type: string
           commission_value: number
           created_at: string
@@ -283,6 +284,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          applies_to_ticket_types?: string[] | null
           commission_type?: string
           commission_value?: number
           created_at?: string
@@ -296,6 +298,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          applies_to_ticket_types?: string[] | null
           commission_type?: string
           commission_value?: number
           created_at?: string
@@ -325,6 +328,7 @@ export type Database = {
           created_by: string | null
           event_id: string
           id: string
+          is_active: boolean
           is_used: boolean
           metadata: Json | null
           qr_code_data: string | null
@@ -339,6 +343,7 @@ export type Database = {
           created_by?: string | null
           event_id: string
           id?: string
+          is_active?: boolean
           is_used?: boolean
           metadata?: Json | null
           qr_code_data?: string | null
@@ -353,6 +358,7 @@ export type Database = {
           created_by?: string | null
           event_id?: string
           id?: string
+          is_active?: boolean
           is_used?: boolean
           metadata?: Json | null
           qr_code_data?: string | null
@@ -393,9 +399,11 @@ export type Database = {
           featured: boolean | null
           gallery_urls: string[] | null
           id: string
+          image_rights_clause: string | null
           image_url: string | null
           latitude: number | null
           liability_clause: string | null
+          liability_waiver: string | null
           location: string
           longitude: number | null
           max_age: number | null
@@ -407,6 +415,7 @@ export type Database = {
           refund_policy: string | null
           registration_end: string
           registration_start: string
+          regulation_document_url: string | null
           regulations_pdf_url: string | null
           regulations_text: string | null
           rejection_reason: string | null
@@ -434,9 +443,11 @@ export type Database = {
           featured?: boolean | null
           gallery_urls?: string[] | null
           id?: string
+          image_rights_clause?: string | null
           image_url?: string | null
           latitude?: number | null
           liability_clause?: string | null
+          liability_waiver?: string | null
           location: string
           longitude?: number | null
           max_age?: number | null
@@ -448,6 +459,7 @@ export type Database = {
           refund_policy?: string | null
           registration_end: string
           registration_start?: string
+          regulation_document_url?: string | null
           regulations_pdf_url?: string | null
           regulations_text?: string | null
           rejection_reason?: string | null
@@ -475,9 +487,11 @@ export type Database = {
           featured?: boolean | null
           gallery_urls?: string[] | null
           id?: string
+          image_rights_clause?: string | null
           image_url?: string | null
           latitude?: number | null
           liability_clause?: string | null
+          liability_waiver?: string | null
           location?: string
           longitude?: number | null
           max_age?: number | null
@@ -489,6 +503,7 @@ export type Database = {
           refund_policy?: string | null
           registration_end?: string
           registration_start?: string
+          regulation_document_url?: string | null
           regulations_pdf_url?: string | null
           regulations_text?: string | null
           rejection_reason?: string | null
