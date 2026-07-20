@@ -273,6 +273,7 @@ export type Database = {
           commission_type: string
           commission_value: number
           created_at: string
+          description: string | null
           event_id: string
           fixed_fee: number | null
           id: string
@@ -285,6 +286,7 @@ export type Database = {
           commission_type?: string
           commission_value?: number
           created_at?: string
+          description?: string | null
           event_id: string
           fixed_fee?: number | null
           id?: string
@@ -297,6 +299,7 @@ export type Database = {
           commission_type?: string
           commission_value?: number
           created_at?: string
+          description?: string | null
           event_id?: string
           fixed_fee?: number | null
           id?: string
@@ -319,6 +322,7 @@ export type Database = {
         Row: {
           code: string
           created_at: string
+          created_by: string | null
           event_id: string
           id: string
           is_used: boolean
@@ -332,6 +336,7 @@ export type Database = {
         Insert: {
           code: string
           created_at?: string
+          created_by?: string | null
           event_id: string
           id?: string
           is_used?: boolean
@@ -345,6 +350,7 @@ export type Database = {
         Update: {
           code?: string
           created_at?: string
+          created_by?: string | null
           event_id?: string
           id?: string
           is_used?: boolean
@@ -382,6 +388,7 @@ export type Database = {
           created_at: string
           description: string | null
           end_date: string | null
+          event_regulation: string | null
           event_type: string
           featured: boolean | null
           gallery_urls: string[] | null
@@ -409,6 +416,7 @@ export type Database = {
           status: string
           subcategory: string | null
           submitted_for_approval_at: string | null
+          terms_and_conditions: string | null
           title: string
           updated_at: string
         }
@@ -421,6 +429,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           end_date?: string | null
+          event_regulation?: string | null
           event_type: string
           featured?: boolean | null
           gallery_urls?: string[] | null
@@ -448,6 +457,7 @@ export type Database = {
           status?: string
           subcategory?: string | null
           submitted_for_approval_at?: string | null
+          terms_and_conditions?: string | null
           title: string
           updated_at?: string
         }
@@ -460,6 +470,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           end_date?: string | null
+          event_regulation?: string | null
           event_type?: string
           featured?: boolean | null
           gallery_urls?: string[] | null
@@ -487,6 +498,7 @@ export type Database = {
           status?: string
           subcategory?: string | null
           submitted_for_approval_at?: string | null
+          terms_and_conditions?: string | null
           title?: string
           updated_at?: string
         }
@@ -1030,6 +1042,7 @@ export type Database = {
           participant_id: string | null
           participant_name: string
           participant_nationality: string | null
+          participant_nif: string | null
           participant_phone: string | null
           payment_method: string | null
           payment_status: string
@@ -1039,8 +1052,10 @@ export type Database = {
           stripe_session_id: string | null
           team_name: string | null
           ticket_type_id: string
+          ticket_type_name: string | null
           tshirt_size: string | null
           updated_at: string
+          user_id: string | null
           voucher_code: string | null
         }
         Insert: {
@@ -1062,6 +1077,7 @@ export type Database = {
           participant_id?: string | null
           participant_name: string
           participant_nationality?: string | null
+          participant_nif?: string | null
           participant_phone?: string | null
           payment_method?: string | null
           payment_status?: string
@@ -1071,8 +1087,10 @@ export type Database = {
           stripe_session_id?: string | null
           team_name?: string | null
           ticket_type_id: string
+          ticket_type_name?: string | null
           tshirt_size?: string | null
           updated_at?: string
+          user_id?: string | null
           voucher_code?: string | null
         }
         Update: {
@@ -1094,6 +1112,7 @@ export type Database = {
           participant_id?: string | null
           participant_name?: string
           participant_nationality?: string | null
+          participant_nif?: string | null
           participant_phone?: string | null
           payment_method?: string | null
           payment_status?: string
@@ -1103,8 +1122,10 @@ export type Database = {
           stripe_session_id?: string | null
           team_name?: string | null
           ticket_type_id?: string
+          ticket_type_name?: string | null
           tshirt_size?: string | null
           updated_at?: string
+          user_id?: string | null
           voucher_code?: string | null
         }
         Relationships: [
@@ -1346,6 +1367,7 @@ export type Database = {
           id: string
           is_active: boolean
           is_public: boolean
+          location: string | null
           logo_url: string | null
           max_members: number | null
           name: string
@@ -1361,6 +1383,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_public?: boolean
+          location?: string | null
           logo_url?: string | null
           max_members?: number | null
           name: string
@@ -1376,6 +1399,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_public?: boolean
+          location?: string | null
           logo_url?: string | null
           max_members?: number | null
           name?: string
