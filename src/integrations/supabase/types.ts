@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      age_groups: {
+        Row: {
+          category: string | null
+          created_at: string
+          event_id: string | null
+          gender: string | null
+          id: string
+          is_active: boolean
+          max_age: number | null
+          min_age: number | null
+          name: string
+          sort_order: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          event_id?: string | null
+          gender?: string | null
+          id?: string
+          is_active?: boolean
+          max_age?: number | null
+          min_age?: number | null
+          name: string
+          sort_order?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          event_id?: string | null
+          gender?: string | null
+          id?: string
+          is_active?: boolean
+          max_age?: number | null
+          min_age?: number | null
+          name?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "age_groups_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           created_at: string | null
@@ -43,6 +90,251 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      email_logs: {
+        Row: {
+          created_at: string
+          delivered_at: string | null
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          opened_at: string | null
+          provider: string | null
+          provider_message_id: string | null
+          recipient_email: string
+          sender_email: string | null
+          sent_at: string | null
+          status: string
+          subject: string
+          template_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          opened_at?: string | null
+          provider?: string | null
+          provider_message_id?: string | null
+          recipient_email: string
+          sender_email?: string | null
+          sent_at?: string | null
+          status?: string
+          subject: string
+          template_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          opened_at?: string | null
+          provider?: string | null
+          provider_message_id?: string | null
+          recipient_email?: string
+          sender_email?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          template_name?: string | null
+        }
+        Relationships: []
+      }
+      email_templates: {
+        Row: {
+          category: string
+          created_at: string
+          html_content: string
+          id: string
+          is_active: boolean
+          name: string
+          subject: string
+          text_content: string | null
+          updated_at: string
+          variables: Json | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          html_content: string
+          id?: string
+          is_active?: boolean
+          name: string
+          subject: string
+          text_content?: string | null
+          updated_at?: string
+          variables?: Json | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          html_content?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          subject?: string
+          text_content?: string | null
+          updated_at?: string
+          variables?: Json | null
+        }
+        Relationships: []
+      }
+      event_checkins: {
+        Row: {
+          bib_number: string | null
+          checked_in_by: string | null
+          checkin_method: string
+          checkin_time: string
+          created_at: string
+          event_id: string
+          id: string
+          notes: string | null
+          participant_email: string
+          participant_name: string
+          registration_id: string
+        }
+        Insert: {
+          bib_number?: string | null
+          checked_in_by?: string | null
+          checkin_method?: string
+          checkin_time?: string
+          created_at?: string
+          event_id: string
+          id?: string
+          notes?: string | null
+          participant_email: string
+          participant_name: string
+          registration_id: string
+        }
+        Update: {
+          bib_number?: string | null
+          checked_in_by?: string | null
+          checkin_method?: string
+          checkin_time?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          notes?: string | null
+          participant_email?: string
+          participant_name?: string
+          registration_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_checkins_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_checkins_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_commissions: {
+        Row: {
+          commission_type: string
+          commission_value: number
+          created_at: string
+          event_id: string
+          fixed_fee: number | null
+          id: string
+          is_active: boolean
+          notes: string | null
+          organizer_id: string
+          updated_at: string
+        }
+        Insert: {
+          commission_type?: string
+          commission_value?: number
+          created_at?: string
+          event_id: string
+          fixed_fee?: number | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          organizer_id: string
+          updated_at?: string
+        }
+        Update: {
+          commission_type?: string
+          commission_value?: number
+          created_at?: string
+          event_id?: string
+          fixed_fee?: number | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          organizer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_commissions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_qr_codes: {
+        Row: {
+          code: string
+          created_at: string
+          event_id: string
+          id: string
+          is_used: boolean
+          metadata: Json | null
+          qr_type: string
+          registration_id: string | null
+          used_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          event_id: string
+          id?: string
+          is_used?: boolean
+          metadata?: Json | null
+          qr_type?: string
+          registration_id?: string | null
+          used_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          is_used?: boolean
+          metadata?: Json | null
+          qr_type?: string
+          registration_id?: string | null
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_qr_codes_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_qr_codes_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       events: {
         Row: {
@@ -76,6 +368,7 @@ export type Database = {
           regulations_text: string | null
           rejection_reason: string | null
           requires_medical_certificate: boolean | null
+          slug: string | null
           start_date: string
           status: string
           subcategory: string | null
@@ -114,6 +407,7 @@ export type Database = {
           regulations_text?: string | null
           rejection_reason?: string | null
           requires_medical_certificate?: boolean | null
+          slug?: string | null
           start_date: string
           status?: string
           subcategory?: string | null
@@ -152,6 +446,7 @@ export type Database = {
           regulations_text?: string | null
           rejection_reason?: string | null
           requires_medical_certificate?: boolean | null
+          slug?: string | null
           start_date?: string
           status?: string
           subcategory?: string | null
@@ -231,6 +526,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      newsletter_subscriptions: {
+        Row: {
+          categories: string[] | null
+          confirmation_token: string | null
+          confirmed: boolean
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          is_active: boolean
+          last_name: string | null
+          subscribed_at: string
+          unsubscribed_at: string | null
+        }
+        Insert: {
+          categories?: string[] | null
+          confirmation_token?: string | null
+          confirmed?: boolean
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id?: string
+          is_active?: boolean
+          last_name?: string | null
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+        }
+        Update: {
+          categories?: string[] | null
+          confirmation_token?: string | null
+          confirmed?: boolean
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          is_active?: boolean
+          last_name?: string | null
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+        }
+        Relationships: []
       }
       notifications: {
         Row: {
@@ -748,6 +1085,39 @@ export type Database = {
           },
         ]
       }
+      security_events: {
+        Row: {
+          created_at: string
+          details: Json | null
+          event_type: string
+          id: string
+          ip_address: string | null
+          severity: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          severity?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          severity?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       support_tickets: {
         Row: {
           assigned_to: string | null
@@ -795,6 +1165,97 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      team_members: {
+        Row: {
+          created_at: string
+          id: string
+          joined_at: string
+          member_email: string | null
+          member_name: string
+          role: string
+          status: string
+          team_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          joined_at?: string
+          member_email?: string | null
+          member_name: string
+          role?: string
+          status?: string
+          team_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          joined_at?: string
+          member_email?: string | null
+          member_name?: string
+          role?: string
+          status?: string
+          team_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          captain_id: string
+          created_at: string
+          description: string | null
+          event_id: string | null
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          max_members: number | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          captain_id: string
+          created_at?: string
+          description?: string | null
+          event_id?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          max_members?: number | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          captain_id?: string
+          created_at?: string
+          description?: string | null
+          event_id?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          max_members?: number | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ticket_types: {
         Row: {
@@ -940,6 +1401,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_feedback: {
+        Row: {
+          admin_notes: string | null
+          browser_info: Json | null
+          created_at: string
+          description: string
+          id: string
+          page_url: string | null
+          priority: string
+          status: string
+          title: string
+          type: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          browser_info?: Json | null
+          created_at?: string
+          description: string
+          id?: string
+          page_url?: string | null
+          priority?: string
+          status?: string
+          title: string
+          type: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          browser_info?: Json | null
+          created_at?: string
+          description?: string
+          id?: string
+          page_url?: string | null
+          priority?: string
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       vouchers: {
         Row: {
