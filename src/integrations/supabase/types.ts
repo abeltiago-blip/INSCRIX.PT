@@ -17,7 +17,9 @@ export type Database = {
       age_groups: {
         Row: {
           category: string | null
+          category_id: string | null
           created_at: string
+          description: string | null
           event_id: string | null
           gender: string | null
           id: string
@@ -26,10 +28,13 @@ export type Database = {
           min_age: number | null
           name: string
           sort_order: number | null
+          subcategory: string | null
         }
         Insert: {
           category?: string | null
+          category_id?: string | null
           created_at?: string
+          description?: string | null
           event_id?: string | null
           gender?: string | null
           id?: string
@@ -38,10 +43,13 @@ export type Database = {
           min_age?: number | null
           name: string
           sort_order?: number | null
+          subcategory?: string | null
         }
         Update: {
           category?: string | null
+          category_id?: string | null
           created_at?: string
+          description?: string | null
           event_id?: string | null
           gender?: string | null
           id?: string
@@ -50,6 +58,7 @@ export type Database = {
           min_age?: number | null
           name?: string
           sort_order?: number | null
+          subcategory?: string | null
         }
         Relationships: [
           {
@@ -311,6 +320,7 @@ export type Database = {
           id: string
           is_used: boolean
           metadata: Json | null
+          qr_code_data: string | null
           qr_type: string
           registration_id: string | null
           used_at: string | null
@@ -322,6 +332,7 @@ export type Database = {
           id?: string
           is_used?: boolean
           metadata?: Json | null
+          qr_code_data?: string | null
           qr_type?: string
           registration_id?: string | null
           used_at?: string | null
@@ -333,6 +344,7 @@ export type Database = {
           id?: string
           is_used?: boolean
           metadata?: Json | null
+          qr_code_data?: string | null
           qr_type?: string
           registration_id?: string | null
           used_at?: string | null
@@ -874,55 +886,121 @@ export type Database = {
       }
       profiles: {
         Row: {
+          affiliation_code: string | null
           avatar_url: string | null
           bio: string | null
+          birth_date: string | null
+          cae: string | null
+          city: string | null
+          company_address: string | null
+          company_city: string | null
+          company_nif: string | null
+          company_phone: string | null
           created_at: string
+          document_number: string | null
           email: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
           first_name: string | null
+          gender: string | null
           id: string
           is_active: boolean
           last_name: string | null
+          medical_conditions: string | null
+          nationality: string | null
+          nif: string | null
           organization_name: string | null
           phone: string | null
+          postal_code: string | null
           role: Database["public"]["Enums"]["user_role"]
+          street: string | null
+          street_number: string | null
+          support_email: string | null
           team_captain_name: string | null
+          team_description: string | null
           team_name: string | null
+          tshirt_size: string | null
           updated_at: string
           user_id: string
+          username: string | null
         }
         Insert: {
+          affiliation_code?: string | null
           avatar_url?: string | null
           bio?: string | null
+          birth_date?: string | null
+          cae?: string | null
+          city?: string | null
+          company_address?: string | null
+          company_city?: string | null
+          company_nif?: string | null
+          company_phone?: string | null
           created_at?: string
+          document_number?: string | null
           email: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           first_name?: string | null
+          gender?: string | null
           id?: string
           is_active?: boolean
           last_name?: string | null
+          medical_conditions?: string | null
+          nationality?: string | null
+          nif?: string | null
           organization_name?: string | null
           phone?: string | null
+          postal_code?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          street?: string | null
+          street_number?: string | null
+          support_email?: string | null
           team_captain_name?: string | null
+          team_description?: string | null
           team_name?: string | null
+          tshirt_size?: string | null
           updated_at?: string
           user_id: string
+          username?: string | null
         }
         Update: {
+          affiliation_code?: string | null
           avatar_url?: string | null
           bio?: string | null
+          birth_date?: string | null
+          cae?: string | null
+          city?: string | null
+          company_address?: string | null
+          company_city?: string | null
+          company_nif?: string | null
+          company_phone?: string | null
           created_at?: string
+          document_number?: string | null
           email?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           first_name?: string | null
+          gender?: string | null
           id?: string
           is_active?: boolean
           last_name?: string | null
+          medical_conditions?: string | null
+          nationality?: string | null
+          nif?: string | null
           organization_name?: string | null
           phone?: string | null
+          postal_code?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          street?: string | null
+          street_number?: string | null
+          support_email?: string | null
           team_captain_name?: string | null
+          team_description?: string | null
           team_name?: string | null
+          tshirt_size?: string | null
           updated_at?: string
           user_id?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -1119,6 +1197,7 @@ export type Database = {
           event_type: string
           id: string
           ip_address: string | null
+          risk_score: number
           severity: string
           user_agent: string | null
           user_id: string | null
@@ -1129,6 +1208,7 @@ export type Database = {
           event_type: string
           id?: string
           ip_address?: string | null
+          risk_score?: number
           severity?: string
           user_agent?: string | null
           user_id?: string | null
@@ -1139,6 +1219,7 @@ export type Database = {
           event_type?: string
           id?: string
           ip_address?: string | null
+          risk_score?: number
           severity?: string
           user_agent?: string | null
           user_id?: string | null
@@ -1200,6 +1281,9 @@ export type Database = {
           joined_at: string
           member_email: string | null
           member_name: string
+          participant_cc: string | null
+          participant_email: string | null
+          participant_name: string | null
           role: string
           status: string
           team_id: string
@@ -1211,6 +1295,9 @@ export type Database = {
           joined_at?: string
           member_email?: string | null
           member_name: string
+          participant_cc?: string | null
+          participant_email?: string | null
+          participant_name?: string | null
           role?: string
           status?: string
           team_id: string
@@ -1222,6 +1309,9 @@ export type Database = {
           joined_at?: string
           member_email?: string | null
           member_name?: string
+          participant_cc?: string | null
+          participant_email?: string | null
+          participant_name?: string | null
           role?: string
           status?: string
           team_id?: string
@@ -1240,38 +1330,47 @@ export type Database = {
       teams: {
         Row: {
           captain_id: string
+          captain_user_id: string | null
           created_at: string
           description: string | null
           event_id: string | null
           id: string
           is_active: boolean
+          is_public: boolean
           logo_url: string | null
           max_members: number | null
           name: string
+          sport_category: string | null
           updated_at: string
         }
         Insert: {
           captain_id: string
+          captain_user_id?: string | null
           created_at?: string
           description?: string | null
           event_id?: string | null
           id?: string
           is_active?: boolean
+          is_public?: boolean
           logo_url?: string | null
           max_members?: number | null
           name: string
+          sport_category?: string | null
           updated_at?: string
         }
         Update: {
           captain_id?: string
+          captain_user_id?: string | null
           created_at?: string
           description?: string | null
           event_id?: string | null
           id?: string
           is_active?: boolean
+          is_public?: boolean
           logo_url?: string | null
           max_members?: number | null
           name?: string
+          sport_category?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1545,6 +1644,16 @@ export type Database = {
     }
     Functions: {
       get_current_user_role: { Args: never; Returns: string }
+      log_security_event: {
+        Args: {
+          p_details?: Json
+          p_event_type: string
+          p_risk_score?: number
+          p_user_agent?: string
+          p_user_id?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       user_role: "admin" | "organizer" | "participant" | "team"
