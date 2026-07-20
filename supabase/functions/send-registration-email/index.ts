@@ -49,6 +49,18 @@ serve(async (req) => {
   try {
     logStep('Email function started')
 
+    // Require authenticated caller (participant, organizer or admin). Recipient
+    // is derived server-side from the registration row.
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const { data: userData } = await supabaseClient.auth.getUser(authHeader.replace('Bearer ', ''))
+    if (!userData?.user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
+
     const requestData: EmailRequest = await req.json()
     logStep('Email request received', { 
       registrationId: requestData.registrationId,

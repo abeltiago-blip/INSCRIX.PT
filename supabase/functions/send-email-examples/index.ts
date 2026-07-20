@@ -25,6 +25,20 @@ serve(async (req) => {
   try {
     logStep('Starting email examples sending')
 
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const { data: userData } = await supabaseClient.auth.getUser(authHeader.replace('Bearer ', ''))
+    if (!userData?.user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const { data: isAdmin } = await supabaseClient.rpc('has_role', { _user_id: userData.user.id, _role: 'admin' })
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: 'Forbidden - admin only' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
+
     const { targetEmail }: { targetEmail: string } = await req.json()
     
     if (!targetEmail) {
