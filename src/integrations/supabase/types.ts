@@ -96,6 +96,7 @@ export type Database = {
           created_at: string
           delivered_at: string | null
           error_message: string | null
+          failed_at: string | null
           id: string
           metadata: Json | null
           opened_at: string | null
@@ -106,12 +107,14 @@ export type Database = {
           sent_at: string | null
           status: string
           subject: string
+          template_key: string | null
           template_name: string | null
         }
         Insert: {
           created_at?: string
           delivered_at?: string | null
           error_message?: string | null
+          failed_at?: string | null
           id?: string
           metadata?: Json | null
           opened_at?: string | null
@@ -122,12 +125,14 @@ export type Database = {
           sent_at?: string | null
           status?: string
           subject: string
+          template_key?: string | null
           template_name?: string | null
         }
         Update: {
           created_at?: string
           delivered_at?: string | null
           error_message?: string | null
+          failed_at?: string | null
           id?: string
           metadata?: Json | null
           opened_at?: string | null
@@ -138,6 +143,7 @@ export type Database = {
           sent_at?: string | null
           status?: string
           subject?: string
+          template_key?: string | null
           template_name?: string | null
         }
         Relationships: []
@@ -146,11 +152,15 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          description: string | null
           html_content: string
+          html_template: string | null
           id: string
           is_active: boolean
           name: string
           subject: string
+          subject_template: string | null
+          template_key: string | null
           text_content: string | null
           updated_at: string
           variables: Json | null
@@ -158,11 +168,15 @@ export type Database = {
         Insert: {
           category?: string
           created_at?: string
+          description?: string | null
           html_content: string
+          html_template?: string | null
           id?: string
           is_active?: boolean
           name: string
           subject: string
+          subject_template?: string | null
+          template_key?: string | null
           text_content?: string | null
           updated_at?: string
           variables?: Json | null
@@ -170,11 +184,15 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
+          description?: string | null
           html_content?: string
+          html_template?: string | null
           id?: string
           is_active?: boolean
           name?: string
           subject?: string
+          subject_template?: string | null
+          template_key?: string | null
           text_content?: string | null
           updated_at?: string
           variables?: Json | null
@@ -532,40 +550,49 @@ export type Database = {
           categories: string[] | null
           confirmation_token: string | null
           confirmed: boolean
+          confirmed_at: string | null
           created_at: string
           email: string
           first_name: string | null
           id: string
           is_active: boolean
           last_name: string | null
+          preferences: Json | null
           subscribed_at: string
           unsubscribed_at: string | null
+          user_id: string | null
         }
         Insert: {
           categories?: string[] | null
           confirmation_token?: string | null
           confirmed?: boolean
+          confirmed_at?: string | null
           created_at?: string
           email: string
           first_name?: string | null
           id?: string
           is_active?: boolean
           last_name?: string | null
+          preferences?: Json | null
           subscribed_at?: string
           unsubscribed_at?: string | null
+          user_id?: string | null
         }
         Update: {
           categories?: string[] | null
           confirmation_token?: string | null
           confirmed?: boolean
+          confirmed_at?: string | null
           created_at?: string
           email?: string
           first_name?: string | null
           id?: string
           is_active?: boolean
           last_name?: string | null
+          preferences?: Json | null
           subscribed_at?: string
           unsubscribed_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
