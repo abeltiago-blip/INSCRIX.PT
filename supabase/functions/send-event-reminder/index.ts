@@ -49,6 +49,25 @@ serve(async (req) => {
   try {
     logStep('Reminder function started')
 
+    // Require authenticated admin or organizer
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const { data: userData } = await supabaseClient.auth.getUser(authHeader.replace('Bearer ', ''))
+    if (!userData?.user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const uid = userData.user.id
+    const [{ data: isAdmin }, { data: isOrganizer }] = await Promise.all([
+      supabaseClient.rpc('has_role', { _user_id: uid, _role: 'admin' }),
+      supabaseClient.rpc('has_role', { _user_id: uid, _role: 'organizer' }),
+    ])
+    if (!isAdmin && !isOrganizer) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
+
     const requestData: ReminderRequest = await req.json()
     logStep('Reminder request received', requestData)
 

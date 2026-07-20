@@ -28,10 +28,21 @@ serve(async (req) => {
 
   try {
     console.log('🚀 Send-auth-email function started')
-    
+
+    // This function is invoked by Supabase auth webhooks. Require a shared
+    // secret so it cannot be used as an open email relay.
+    const expectedSecret = Deno.env.get('AUTH_HOOK_SECRET')
+    const provided = req.headers.get('x-webhook-secret') || req.headers.get('x-auth-hook-secret')
+    if (!expectedSecret || provided !== expectedSecret) {
+      return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     const startTime = Date.now()
     const requestData = await req.json()
-    console.log('📨 Request data received:', JSON.stringify(requestData, null, 2))
+    console.log('📨 Request received for:', requestData?.record?.email)
+
 
     // Validate request data
     if (!requestData.record || !requestData.record.email) {

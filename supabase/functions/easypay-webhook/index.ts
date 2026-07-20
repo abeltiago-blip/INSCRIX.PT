@@ -15,22 +15,33 @@ serve(async (req) => {
   try {
     console.log("EasyPay webhook received");
 
+    // Verify shared webhook secret. EasyPay lets you configure a static header
+    // (documented as `t_key` / secret). We accept it via any of these headers.
+    const expectedSecret = Deno.env.get("EASYPAY_WEBHOOK_SECRET");
+    if (!expectedSecret) {
+      console.error("EASYPAY_WEBHOOK_SECRET not configured");
+      return new Response("Server misconfigured", { status: 500, headers: corsHeaders });
+    }
+    const provided =
+      req.headers.get("x-easypay-signature") ||
+      req.headers.get("x-webhook-secret") ||
+      req.headers.get("t_key") ||
+      new URL(req.url).searchParams.get("secret");
+    if (!provided || provided !== expectedSecret) {
+      console.warn("Invalid or missing webhook secret");
+      return new Response("Unauthorized", { status: 401, headers: corsHeaders });
+    }
+
     // Initialize Supabase client with service role key
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
+      { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
     const body = await req.text();
-    console.log("Webhook body:", body);
+    console.log("Webhook body length:", body.length);
 
-    // Parse the webhook payload
     let webhookData;
     try {
       webhookData = JSON.parse(body);
@@ -38,6 +49,7 @@ serve(async (req) => {
       console.error("Error parsing webhook body:", parseError);
       return new Response("Invalid JSON", { status: 400, headers: corsHeaders });
     }
+
 
     console.log("Parsed webhook data:", webhookData);
 

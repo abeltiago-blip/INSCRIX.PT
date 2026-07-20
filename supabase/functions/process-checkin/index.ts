@@ -8,11 +8,11 @@ const corsHeaders = {
 
 interface CheckinRequest {
   qrData: string;
-  scannerUserId?: string;
   latitude?: number;
   longitude?: number;
   notes?: string;
 }
+
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
@@ -33,24 +33,26 @@ serve(async (req) => {
   try {
     logStep("Checkin function started");
 
-    // Get authenticated user (scanner)
+    // Require authenticated scanner (organizer/admin). Never trust body-provided user ids.
     const authHeader = req.headers.get("Authorization");
-    let scannerUserId = null;
-    
-    if (authHeader) {
-      const token = authHeader.replace("Bearer ", "");
-      const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-      if (!userError && userData.user) {
-        scannerUserId = userData.user.id;
-        logStep("Scanner authenticated", { scannerUserId });
-      }
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+    if (userError || !userData?.user) {
+      return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const scannerUserId = userData.user.id;
+    logStep("Scanner authenticated", { scannerUserId });
 
     const requestData: CheckinRequest = await req.json();
-    logStep("Checkin request received", { 
-      hasQrData: !!requestData.qrData,
-      scannerUserId: scannerUserId || requestData.scannerUserId 
-    });
+    logStep("Checkin request received", { hasQrData: !!requestData.qrData, scannerUserId });
+
 
     // Parse QR code data
     let qrPayload;
@@ -130,22 +132,13 @@ serve(async (req) => {
       });
     }
 
-    // Verify scanner has permission (must be organizer or admin)
-    const actualScannerUserId = scannerUserId || requestData.scannerUserId;
-    if (actualScannerUserId) {
-      const { data: scannerProfile } = await supabaseClient
-        .from('profiles')
-        .select('role, user_id')
-        .eq('user_id', actualScannerUserId)
-        .single();
-
-      const isAuthorized = 
-        scannerProfile?.role === 'admin' || 
-        (scannerProfile?.role === 'organizer' && event.organizer_id === actualScannerUserId);
-
-      if (!isAuthorized) {
-        throw new Error("Not authorized to perform check-ins for this event");
-      }
+    // Verify scanner has permission (must be admin, or organizer of this event)
+    const { data: isAdmin } = await supabaseClient.rpc('has_role', { _user_id: scannerUserId, _role: 'admin' });
+    const isOrganizer = event.organizer_id === scannerUserId;
+    if (!isAdmin && !isOrganizer) {
+      return new Response(JSON.stringify({ success: false, error: "Not authorized to perform check-ins for this event" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Create check-in record
@@ -155,13 +148,14 @@ serve(async (req) => {
       participant_id: registration.participant_id,
       participant_name: registration.participant_name,
       participant_email: registration.participant_email,
-      scanner_user_id: actualScannerUserId,
+      scanner_user_id: scannerUserId,
       checkin_method: 'qr_scan',
       latitude: requestData.latitude,
       longitude: requestData.longitude,
       notes: requestData.notes,
       checkin_time: new Date().toISOString()
     };
+
 
     const { data: checkin, error: checkinError } = await supabaseClient
       .from('event_checkins')
