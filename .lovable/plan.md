@@ -1,63 +1,63 @@
 
-# Revisão Completa do Site — Plano
+# Plano — Funcional primeiro, depois UX/Design
 
-Contexto: após a ativação do Lovable Cloud, o schema foi restaurado mas a base de dados arranca vazia. O build TypeScript está limpo. A auditoria da BD mostra 10 avisos de segurança (políticas RLS permissivas + funções SECURITY DEFINER expostas). Vou fazer a revisão em 3 fases, aplicando correções ao longo do caminho.
+## Fase A — Validação funcional ponta-a-ponta
 
-## Fase 1 — Segurança & BD (crítica, primeiro)
+Testar cada fluxo com Playwright contra `http://localhost:8080`, capturar screenshots, ler console + network, e corrigir bugs encontrados em cada etapa antes de passar à seguinte.
 
-1. **Auditar as 26 tabelas** e confirmar que todas têm RLS ativo + policies coerentes + GRANTs corretos.
-2. **Corrigir os 10 warnings do linter Supabase**:
-   - 2× "RLS Policy Always True" em UPDATE/DELETE/INSERT → substituir por policies scoped a `auth.uid()` / `has_role()`.
-   - 4× funções SECURITY DEFINER executáveis por `anon` → `REVOKE EXECUTE FROM anon, public`.
-   - 4× funções SECURITY DEFINER executáveis por `authenticated` sem necessidade → revogar ou converter para SECURITY INVOKER.
-3. **Verificar tabela `user_roles`** (roles têm de estar separadas do `profiles`, com função `has_role` SECURITY DEFINER). Se estiver misturado, migrar.
-4. **Confirmar policy de INSERT em `orders`** (foi corrigida antes da migração — reaplicar se em falta).
-5. **Storage buckets** `event-images` e `event-documents` — confirmar existência + policies de upload/leitura.
-6. **Configurar auth**: ativar HIBP (leaked passwords), garantir que auto-confirm não está ligado, adicionar Google OAuth se pretendido.
+1. **Auth**
+   - Registo participante, organizador e equipa.
+   - Login / logout / reset de password.
+   - Verificar entrega de email (fila `auth_emails`, `email_send_log`).
+   - Confirmar `AUTH_HOOK_SECRET` no webhook Supabase; se em falta, avisar-te para configurares.
 
-## Fase 2 — Revisão Funcional (fluxos end-to-end)
+2. **Criação e aprovação de evento**
+   - Organizador cria evento em `/create-event` com imagem, documento (regulamento), coordenadas GPS, bilhetes com escalões / idade / género.
+   - Admin aprova em `/admin/event-approvals`.
+   - Confirmar aparecimento em Home (hero + próximos) e `/categorias`.
 
-Auditar cada fluxo com Playwright + leitura de código, corrigindo tudo o que quebrar:
+3. **Edição de evento**
+   - Organizador via `/edit-event/:id`.
+   - Admin via `/admin/event/:id/edit` (6 abas).
 
-- **Auth**: Register / Login / PasswordReset / ConfirmEmail — criar utilizador teste e completar sign-up.
-- **Criação de evento** (`/create-event`) — organizador cria, com upload de imagem, documento, coordenadas, bilhetes com escalões + idade + género.
-- **Edição de evento** — via `/edit-event/:id` (organizador) e `/admin/event/:id/edit` (admin).
-- **Aprovação de eventos** (`AdminEventApprovals`) — pending → approved e verificar aparição em Home/Categorias.
-- **Homepage** — Hero + Próximos Eventos + Categorias (real-time updates).
-- **Checkout** — carrinho, dados de faturação (Particular / Consumidor Final / Empresa), voucher, submissão da order.
-- **Inscrição de participantes** — validações CC/NIF por país, idade, género.
-- **Emails** — templates, envio via Resend/SMTP, logs (`AdminEmailCenter`, `AdminEmailTest`).
-- **QR codes / check-in** — geração e leitura.
-- **Dashboards** — Participante, Organizador (estatísticas, exportações), Admin.
-- **Teams** — criar equipa, adicionar membros.
+4. **Inscrição + checkout**
+   - Adicionar bilhete ao carrinho, preencher dados de participante (validação CC/NIF, idade, género).
+   - Checkout com os 3 modos de faturação (Particular, Consumidor Final, Empresa) e voucher.
+   - Submissão da order (RLS INSERT) e criação do pagamento EasyPay.
+   - Webhook EasyPay: teste em modo simulado com `EASYPAY_WEBHOOK_SECRET`.
 
-Cada bug encontrado é corrigido no momento; erros grandes recebem correção isolada.
+5. **Emails transacionais**
+   - Confirmação de inscrição, confirmação de pagamento, entrega de bilhete, lembretes.
+   - `AdminEmailTest` e `AdminEmailCenter`.
 
-## Fase 3 — Design & UX / Acessibilidade
+6. **QR / Check-in**
+   - Geração QR do evento e do bilhete.
+   - `process-checkin` com utilizador autenticado (admin/organizador).
 
-- **Responsividade mobile** em todas as páginas principais (Home, EventDetail, Checkout, Dashboards, Admin).
-- **Consistência visual**: eliminar cores hardcoded (`text-white`, `bg-black`, hex arbitrário) — tudo passa por tokens semânticos do `index.css`.
-- **Acessibilidade**:
-  - `aria-label` em botões só de ícone.
-  - Alt text em imagens.
-  - Um `<main>` por rota.
-  - `h-dvh` em vez de `h-screen`.
-  - Contraste WCAG AA em toda a app.
-- **Header/Footer** — navegação coerente, links funcionais.
-- **Estados vazios** — placeholders úteis (não "undefined" ou lista vazia sem contexto).
-- **Loading / error states** — skeletons + toasts consistentes.
+7. **Dashboards**
+   - Participante (`/participant-dashboard`), Organizador (`/organizer-dashboard`), Admin (`/admin`).
+   - Exportações e estatísticas.
 
-## Entregáveis
+8. **Teams**
+   - Criar equipa, adicionar membros, associar inscrições.
 
-- Relatório resumido no fim de cada fase com o que foi corrigido e o que ficou por resolver (com justificação, se aplicável).
-- Todas as correções críticas e importantes aplicadas.
-- Lista final de melhorias opcionais/nice-to-have para tu decidires depois.
+Ao fim da Fase A: relatório curto com o que passou, o que foi corrigido, e o que precisa de ação tua (secrets, dados de teste, configurações externas).
 
-## Notas técnicas
+## Fase B — Revisão UX / Design / Acessibilidade
 
-- Não vou tocar em `src/integrations/supabase/client.ts`, `types.ts`, `.env` nem `supabase/config.toml` (auto-gerados).
-- Migrações SQL passarão pelo fluxo de aprovação normal (uma de cada vez).
-- A revisão funcional exige uma conta de teste — vou criar uma via Playwright ou pedir credenciais se necessário.
-- Como a BD está vazia, para testar fluxos que dependem de eventos existentes vou criar dados de teste (que podes eliminar depois) ou pedir-te para publicares um evento real primeiro.
+Só arranca depois da Fase A estar verde (ou com bloqueios identificados).
 
-Ordem de execução: **Fase 1 → Fase 2 → Fase 3**. Podes interromper a qualquer momento se preferires focar noutra coisa.
+- **Responsividade mobile** em Home, EventDetail, Checkout, Dashboards, Admin.
+- **Tokens semânticos**: eliminar `text-white`, `bg-black`, hex arbitrários — passar tudo por `index.css`.
+- **Acessibilidade**: `aria-label` em icon-buttons, alt text, um `<main>` por rota, `h-dvh`, contraste WCAG AA.
+- **Header/Footer**: navegação coerente, links funcionais.
+- **Estados vazios / loading / error**: skeletons + toasts consistentes.
+
+## Notas
+
+- Sem alterações a `client.ts`, `types.ts`, `.env`, `supabase/config.toml`.
+- Dados de teste criados durante a Fase A serão listados para eliminares no fim.
+- Se um fluxo depender de credenciais externas (EasyPay sandbox, SMTP), paro e peço-te.
+- Bugs pequenos: corrijo no momento. Bugs grandes: paro, mostro-te o diagnóstico antes de corrigir.
+
+Ordem: **Fase A → Fase B**.
